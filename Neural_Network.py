@@ -164,10 +164,13 @@ class Neural_Network:
     # This function implements the rectified linear unit
     def relu( self, myInput ):
         
+        myCopy = copy.deepcopy(myInput)
+
         for i in range( len(myInput) ):
-            myInput[i] = max(0.0, myInput[0][i] )
+            for j in range( len(myInput[i] ) ):
+                myCopy[i, j] = max(0.0, myInput[i,j] )
     
-        return myInput
+        return myCopy
     
     # This function implements the softmax function
     # Input is a 1 x N vector where N is the number of categorical output variables 
@@ -202,8 +205,9 @@ class Neural_Network:
         layer_next = inputVector.copy().T
          
         for i in range(len(self.allWeights) ):
-            layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
-        
+            # layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
+            layer_next = self.relu( np.matmul( layer_next.copy(), self.allWeights[i].copy() ) )
+
 
         # layer_1 =  np.matmul( inputVector.copy().T, self.w1.copy() )
 

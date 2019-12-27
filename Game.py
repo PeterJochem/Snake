@@ -44,6 +44,150 @@ class Game:
         # FIX ME!!                              # 5, 20
         hiddenArch = [5] #  3, 4]
         self.neural_network = Neural_Network( 8, hiddenArch, 4  )
+        
+        #print( len(self.neural_network.allWeights[0]) )
+
+        ######## GRAPHICS FIELDS #############
+        # Store fields here to make copying the NN easier later 
+        # Store ratio to describe how much space the NN gets 
+        self.allPoints = self.draw_NN()
+        
+        # self.allWeights_graphics = 
+
+
+        ######################################
+            
+
+    def draw_NN(self):
+        
+        if ( self.window == None):
+            return None
+
+        allCircles = [] 
+         
+        center_x = (self.width_window * 0.75) + (0.5 * self.width_window * 0.22)
+
+        start_y = self.length_window * 0.03
+        
+        # We want the widest layer to just fill up the width
+        widest = 8
+        for i in range(len(self.neural_network.allWeights) ):
+            if ( ( len(self.neural_network.allWeights[i]) > widest) ):
+                    widest = len(self.neural_network.allWeights[i] )
+        
+        increment_x = (self.width_window * 0.25) / (float( widest + 1 ) ) 
+
+        nextRow = start_y 
+        lastColumn = center_x
+        
+        # Create input and hidden neurons 
+        for i in range(len(self.neural_network.allWeights) ):
+            
+            # Draw the center(s) neurons
+            length = -1
+            priorOffset = -1
+            numNeurons = len(self.neural_network.allWeights[i] )
+            if ( ( (numNeurons % 2) == 0) ):
+                # Draw two in the center
+                priorOffset = (increment_x / 2.0)
+                length = int( ( numNeurons - 2) / 2 )
+                nextPoint = None
+                
+                nextPoint1 = Point( center_x + (increment_x / 2.0) , nextRow  )
+                
+                nextPoint2 = Point( center_x - (increment_x / 2.0) , nextRow  )
+                
+                # Draw the first
+                nextCircle = Circle(nextPoint1, 3)
+                nextCircle.setFill("red")
+                allCircles.append(nextCircle)
+                nextCircle.draw(self.window)
+                # Draw the second
+                nextCircle = Circle(nextPoint2, 3)
+                nextCircle.setFill("red")
+                allCircles.append(nextCircle)
+                nextCircle.draw(self.window)
+                    
+
+            elif( (numNeurons % 2) != 0):
+                length = int( ( len(self.neural_network.allWeights[i] - 1) ) / 2) 
+                priorOffest = 0.0
+                # Draw just one in the center
+                nextPoint = Point( center_x, nextRow)
+                nextCircle = Circle(nextPoint, 3)
+                nextCircle.setFill("red")
+                allCircles.append(nextCircle)
+                nextCircle.draw(self.window)
+ 
+            
+            # Draw the rest of the neurons
+            for j in range( length ):    
+                    
+                # Draw the first
+                nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
+                nextCircle = Circle(nextPoint, 3)
+                nextCircle.setFill("red")
+                allCircles.append(nextCircle)
+                nextCircle.draw(self.window)
+                # Draw the second
+                nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
+                nextCircle = Circle(nextPoint, 3)
+                nextCircle.setFill("red")
+                allCircles.append(nextCircle)
+                nextCircle.draw(self.window)
+                priorOffset = increment_x + priorOffset 
+       
+            nextRow = nextRow + 50
+
+        # Create the output neurons
+        # Draw the center(s) neurons
+        length = -1
+        priorOffset = -1
+        numNeurons = 4
+        # Draw two in the center
+        priorOffset = (increment_x / 2.0)
+        length = int( ( numNeurons - 2) / 2 )
+        nextPoint = None
+
+        nextPoint1 = Point( center_x + (increment_x / 2.0) , nextRow  )
+
+        nextPoint2 = Point( center_x - (increment_x / 2.0) , nextRow  )
+
+        # Draw the first
+        nextCircle = Circle(nextPoint1, 3)
+        nextCircle.setFill("red")
+        allCircles.append(nextCircle)
+        nextCircle.draw(self.window)
+        # Draw the second
+        nextCircle = Circle(nextPoint2, 3)
+        nextCircle.setFill("red")
+        allCircles.append(nextCircle)
+        nextCircle.draw(self.window)
+
+        # Draw the rest of the neurons
+        for j in range( length ):
+
+            # Draw the first
+            nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
+            nextCircle = Circle(nextPoint, 3)
+            nextCircle.setFill("red")
+            allCircles.append(nextCircle)
+            nextCircle.draw(self.window)
+            # Draw the second
+            nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
+            nextCircle = Circle(nextPoint, 3)
+            nextCircle.setFill("red")
+            allCircles.append(nextCircle)
+            nextCircle.draw(self.window)
+            priorOffset = increment_x + priorOffset
+
+        nextRow = nextRow + 50
+    
+        
+
+        # Return the list of points
+        return allCircles 
+        
 
     # Return the normalized distance
     def distance_wall(self, x, y, priorX, priorY):
@@ -343,8 +487,8 @@ class Game:
             Point_1 = Point( 0 , 0 ) 
             for j in range( self.width_grid ):
                 
-                current_row = float(self.length_window) / float(self.length_grid)
-                current_column = float(self.width_window) / float(self.width_grid ) 
+                current_row = (0.75) * float(self.length_window) / float(self.length_grid)
+                current_column = (0.75) * float(self.width_window) / float(self.width_grid ) 
                 
                 Point_1 = Point( current_row * j , current_column * i )  
                 Point_2 = Point( current_row * (j + 1) , current_column * (i + 1) )
@@ -385,8 +529,13 @@ class Game:
             except:
                 pass
 
-        # Make the food blink?? Kind of cool?
     
+        # Draw the neural network
+         
+        
+
+
+
     # This moves the game from one state to the next
     # Input is either "left", "right", "up", "down"
     def nextState(self, command):
