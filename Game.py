@@ -42,7 +42,8 @@ class Game:
         self.current_food = self.placeFood()
         
         # FIX ME!!                              # 5, 20
-        self.neural_network = Neural_Network( 8, 5, 4  )
+        hiddenArch = [5] #  3, 4]
+        self.neural_network = Neural_Network( 8, hiddenArch, 4  )
 
     # Return the normalized distance
     def distance_wall(self, x, y, priorX, priorY):

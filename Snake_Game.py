@@ -120,8 +120,8 @@ def nextGeneration(doubles, rate):
     return doubles
 
 
-numGenerations = 0
-#gen_now = generation_0(2000)
+numGenerations = 2
+gen_now = generation_0(2000)
 
 rate_level = [5, 100, 5]
 for i in range( numGenerations ):
@@ -130,10 +130,10 @@ for i in range( numGenerations ):
     
     gen_now = nextGeneration( gen_now, rate_level[i] )
 
-#random. shuffle(gen_now)
+random. shuffle(gen_now)
 
-#gen_now[0].saveWeights()
-#gen_now[0].loadWeights()
+gen_now[0].saveWeights()
+gen_now[0].loadWeights()
 
 
 g = input("Press Enter to see the trained snake")
@@ -143,13 +143,16 @@ for i in range(numGames):
     # print("Game: " + str(i) )
     myGame = Game(20, 20, 600, 500, True)
     
+    # myGame.neural_network.saveWeights()
+    # Load trained weights
     myGame.neural_network.loadWeights()
-    #myGame.neural_network = gen_now[0]
+    
+    # myGame.neural_network = gen_now[0]
     
     myGame.drawBoard()
 
     while ( True ):
-        time.sleep(0.4)
+        time.sleep(0.2)
         move = myGame.generate_NN_Move()
         if(myGame.neural_network.checkMoves() == True):
             pass 

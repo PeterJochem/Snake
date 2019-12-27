@@ -6,21 +6,42 @@ import copy
 
 class Neural_Network:
 
-
-    def __init__(self, numInputs, numHidden, numOutput):
+    # Describe the inputs 
+    # NumInputs is 
+    # HiddenArch is a list of the number of neurons at each HIDDEN layer of the NN
+    # numOutput is 
+    def __init__(self, numInputs, hiddenArch, numOutput):
         
         self.numInputs = numInputs
-        self.numHidden = numHidden
         self.numOutput = numOutput
 
-        # Pass in the size of the input
-        self.w1 = self.init_Weights(numInputs, numHidden)
-        self.bias_1 = np.ones(numHidden) * 0.1
+        # Create the hidden weight sets with the right sizes 
+        self.allWeights = []
 
+        for i in range( -1, len(hiddenArch)  ):
+            # Check the edge cases
+            # print(i)
+            if (i == -1):
+                self.allWeights.append( self.init_Weights(numInputs, hiddenArch[0] ) )
+        
+            elif ( i == len(hiddenArch) - 1):
+                self.allWeights.append( self.init_Weights( hiddenArch[i], self.numOutput ) )
+            else:
+                # Normal case
+                self.allWeights.append( self.init_Weights( hiddenArch[i], hiddenArch[i + 1] ) )
+         
+        for i in range(len( self.allWeights ) ):
+            #print("")
+            #print(self.allWeights[i])
+            #print("")
+            pass
+        
+        # Pass in the size of the input
+        # self.w1 = self.init_Weights(numInputs, numHidden)
+        # self.bias_1 = np.ones(numHidden) * 0.1
         # Pass in the size of the intermediate vector
-        self.w2 = self.init_Weights(numHidden, numOutput)
-        self.bias_2 = np.ones(numOutput) * 0.1
-     
+        # self.w2 = self.init_Weights(numHidden, numOutput)
+        # self.bias_2 = np.ones(numOutput) * 0.1
         # For testing
         self.up = False
         self.down = False
@@ -113,12 +134,14 @@ class Neural_Network:
 
             nextChild_solo =  copy.deepcopy(self)
             nextChild_couple = copy.deepcopy(self)
+            
+            for i in range(len(self.allWeights) ):
+                
+                nextChild_solo.allWeights[i] = ( ((self.allWeights[i] + partner.allWeights[i]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w1), len(self.w1[0])  )  )
+                nextChild_solo.allWeights[i] = ( ((self.allWeights[i] + partner.allWeights[i]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w2), len(self.w2[0] ) )  )
 
-            nextChild_solo.w1 = ( ((self.w1 + partner.w1) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w1), len(self.w1[0])  )  )
-            nextChild_solo.w2 = ( ((self.w2 + partner.w2) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w2), len(self.w2[0] ) )  )
-
-            nextChild_couple.w1 = ( ((self.w1) ) ) + ( self.createVector( -1.0, 1.0, len(self.w1), len(self.w1[0])  )  )
-            nextChild_couple.w2 = ( ((self.w2) ) ) + ( self.createVector( -1.0, 1.0, len(self.w2), len(self.w2[0])  )  )
+                nextChild_couple.allWeights[i] = ( ((self.allWeights[i]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[i]), len(self.allWeights[i][0] )  )  )
+                nextChild_couple.allWeights[i] = ( ((self.allWeights[i]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[i]), len(self.allWeights[i][0] )  )  )
 
             offSpring.append(nextChild_solo)
             offSpring.append(nextChild_couple)
@@ -175,13 +198,20 @@ class Neural_Network:
         
         # WHY DOES RELU PREVENT TRIPLES??????
         #layer_1 = self.relu( np.matmul( inputVector.copy().T, self.w1.copy() ) )  # + self.bias_1 )   
-        layer_1 =  np.matmul( inputVector.copy().T, self.w1.copy() )
+        
+        layer_next = inputVector.copy().T
+         
+        for i in range(len(self.allWeights) ):
+            layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
+        
+
+        # layer_1 =  np.matmul( inputVector.copy().T, self.w1.copy() )
 
         # Use the softmax function at the output layer
         #outputVector = # np.array( [ self.softmax( (np.matmul( layer_1.copy(), self.w2.copy() ) )[0] ) ] ) # + self.bias_2 )
         
         # outputVector = np.array( [ np.matmul( layer_1.copy(), self.w2.copy() )[0]  ] ) 
-        outputVector = np.matmul( layer_1.copy(), self.w2.copy() )
+        #outputVector = np.matmul( layer_1.copy(), self.w2.copy() )
     
 
         #print("") 
@@ -192,7 +222,7 @@ class Neural_Network:
         #    pass
         
         
-        return outputVector
+        return layer_next
 
     
     def saveWeights(self):
@@ -203,33 +233,27 @@ class Neural_Network:
         myFile.write( "input:" + str( self.numInputs ) )
         myFile.write("\n")
 
-        myFile.write( "numHiddenLayers:1" )  # +  str( self.numHiddenLayers ) )
+        myFile.write( "numLayers:" + str( len(self.allWeights) + 1) )
         myFile.write("\n")
 
         # Write the hidden layers - FIX to make more general!
         # change the name of this to hidden width
-        myFile.write( "hidden_layer:" + str( self.numHidden ) )
-        myFile.write("\n")
+        for i in range(len(self.allWeights) ):
+            myFile.write( "layer:" + str( len(self.allWeights[i] ) ) )
+            myFile.write("\n")
 
+        
         myFile.write( "output:" + str( self.numOutput ) )
         myFile.write("\n")
 
-        # Save the first set of weights
-        for i in range(len( self.w1) ):
-            for j in range (len (self.w1[0]) ):
-                myFile.write( str(self.w1[i, j] ) )
-                myFile.write( "\n" )
-
-        # myFile.write("\n")
-
-        # Save the second layer of weights 
-        for i in range(len( self.w2) ):
-            for j in range (len (self.w2[0]) ):
-                myFile.write( str(self.w2[i, j] ) )
-                myFile.write("\n")
+        # Save the all weights
+        for i in range(len( self.allWeights) ):
+            for j in range (len (self.allWeights[i]) ):
+                for k in range(len( self.allWeights[i][j] ) ):
+                    myFile.write( str(self.allWeights[i][j][k] ) )
+                    myFile.write( "\n" )
 
         myFile.close()
-
 
     # Load the weights from the file
     def loadWeights(self):
@@ -239,11 +263,11 @@ class Neural_Network:
         lineNumber = 0
 
         # Create the empty weight sets - we will fill them below 
-
-        self.w1 = np.zeros( (self.numInputs, self.numHidden) )
-        self.w2 = np.zeros( (self.numHidden, self.numOutput) )
+        newWeights = copy.deepcopy(self.allWeights)
+        allWidths = []
 
         # Records where in the matrix to write the next value
+        currentLayer = 0
         currentRow = 0
         currentColumn = 0
         currentSet = 1
@@ -253,59 +277,46 @@ class Neural_Network:
                 lineNumber = lineNumber + 1
                 continue
             elif ( lineNumber == 1):
-                self.numHiddenLayers = int( (x.split(":") )[1] )
+                numLayers = int( (x.split(":") )[1] )
                 lineNumber = lineNumber + 1
+                
                 continue
-            elif( lineNumber == 2 ):
-                self.numHidden = int( (x.split(":") )[1] )
-                lineNumber = lineNumber + 1
-                continue
-            elif( lineNumber == 3 ):
-                self.numOutput = int( (x.split(":") )[1] )
+                #print(numLayers)
+                #print(len(self.allWeights) )
+                # Record all the number of weights
+            elif( (lineNumber >= 2) and ( lineNumber < numLayers + 2) ):
+                
+                allWidths.append( int( (x.split(":") )[1] ) )
+                    
+                # print( "Next width is " + str(allWidths[lineNumber - 2] ) )
+
                 lineNumber = lineNumber + 1
                 continue
 
             # Get the next value from the file 
             value_now = x
-
+        
             # Write the weights
-            if ( currentSet == 1 ):
-                self.w1[currentRow, currentColumn] = value_now
+            newWeights[currentLayer][currentRow, currentColumn] = value_now
 
-                # Check for change to next weight set 
-                # Update the weight sets  
-                # Increment the current row and column
-                # currentRow = currentRow + 1
-                currentColumn = currentColumn + 1
-                if ( currentColumn >= len(self.w1[0]) ):
-                    currentColumn = 0
-                    currentRow = currentRow + 1
+            # Check for change to next weight set 
+            # Update the weight sets  
+            # Increment the current row and column
+            # currentRow = currentRow + 1
+            currentColumn = currentColumn + 1
+            if ( currentColumn >= len(newWeights[currentLayer][0] ) ):
+                currentColumn = 0
+                currentRow = currentRow + 1
 
-                if ( currentRow >=  len(self.w1) ):
-                    currentRow = 0
-                    currentColumn = 0
-                    # Update to the next set 
-                    currentSet = 2
-                    # Update to the next set
+            if ( currentRow >=  len(newWeights[currentLayer] ) ):
+                currentRow = 0
+                currentColumn = 0
+                currentLayer = currentLayer + 1
             
-            else:
-                self.w2[currentRow, currentColumn] = value_now
-
-                # Check for change to next weight set
-                # Update the weight sets
-                # Increment the current row and column
-                # currentRow = currentRow + 1
-                currentColumn = currentColumn + 1
-                if ( currentColumn >= len(self.w2[0]) ):
-                    currentColumn = 0
-                    currentRow = currentRow + 1
-
-                if ( currentRow >=  len(self.w2) ):
-                    currentRow = 0
-                    currentColumn = 0
-                    # Update to the next set
-                    currentSet = 2
-                    # Update to the next set
+            if ( currentLayer >= len(newWeights) ):
+                break
+                
+        self.allWeights = newWeights
 
         myFile.close()
 
