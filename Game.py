@@ -7,7 +7,12 @@ from random import random
 from Neural_Network import Neural_Network
 
 class Game: 
-        
+    
+    # length_grid is 
+    # width grid is 
+    # legth_window is
+    # width_window is 
+    # display is 
     def __init__(self, length_grid, width_grid, length_window, width_window, display):
         
         self.score = 0

@@ -7,71 +7,68 @@ import random
 
 ############ Main ##################
 
-# Create game 
-# Run the game's logic
 
+# Records how many children each NN has  
 rate_update = 4 
 
+# Simply counts what generation we are on
 current_gen = 0
 
+# Records the highest score seen so far in training 
+# So we can save the weights of that neural network
 highestScore = 7
 
+# This creates the inital cohort of neural networks
+# numGames is the number of games/nn's to have in the cohort
+# Returns the cohort of neural networks
 def generation_0( numGames ):
 
     allGames = [  ]
 
     for i in range(numGames):
-        # print("Game: " + str(i) )
         myGame = Game(20, 20, 600, 500, False)
         allGames.append(myGame)
         myGame.drawBoard()
 
         while ( True ):    
-            # time.sleep(0.4)
             move = myGame.generate_NN_Move() 
             if ( myGame.isOver == True):
-                #if(myGame.neural_network.checkDirections() == True):
-                #    print("ALL 4 directions found!!")
                 break
             else:
                 myGame.nextState( move )
 
     # Find the best nets in the set - take the ones with the most moves
-    doubles = []
+    allDirections = []
     maxIndex = 0
     secondIndex = 1 
     for i in range(1, len(allGames) ):
         if ( allGames[i].neural_network.checkMoves() > 3.0  ):
             if ( allGames[i].moveNumber < 900 ):
-                doubles.append( allGames[i].neural_network )
+                allDirections.append( allGames[i].neural_network )
 
-    print("")
-    print("The percentage of doubles is " + str( float( len(doubles) ) / float( len( allGames)  )   ) )
-    print("")
-    # Take the two best NN and mutate them
+    # Return the NN's that have moved in all the directions
+    return allDirections
 
-    return doubles
-
-
-
-def nextGeneration(doubles, rate): 
+# This takes a group of NN's and the number of children each can have 
+# and generates the next generation of NN's
+# 
+def nextGeneration(currentCohort, rate): 
     
     global rate_update
     global current_gen
     double = False
     
     children = []
-    for i in range(len(doubles) - 1 ):
+    for i in range(len(currentCohort) - 1 ):
             
         # Change how pairs are made
-        children_new = doubles[i].crossOver(doubles[i + 1], rate)
+        children_new = currentCohort[i].crossOver(currentCohort[i + 1], rate)
         children.extend(children_new)
 
     
     allGames = []
     # Run a game for each child
     for i in range( len(children)  ):
-        # print("Game: " + str(i) )
         myGame = Game(20, 20, 600, 500, False)
             
         myGame.neural_network = children[i]
@@ -80,57 +77,42 @@ def nextGeneration(doubles, rate):
 
         myGame.drawBoard()
 
-
         while ( True ):
-            # time.sleep(0.4)
             move = myGame.generate_NN_Move()
             if ( myGame.isOver == True):
                 if ( myGame.score > 2.0 ):
                     double = True
                     # rate_update = 10
-                #if(myGame.neural_network.checkDirections() == True):       
-                #    print("ALL 4 directions found!!")
                 break
             else:
                 myGame.nextState( move )
             
-
-    doubles = []
+    currentCohort = []
     for i in range(1, len(allGames) ):
-        if ( allGames[i].neural_network.checkMoves() > 1.0  ):
+        if ( allGames[i].neural_network.checkMoves() > 1.0):
             if ( allGames[i].moveNumber < 900 ):                
                 
                 if ( current_gen >= 1):
                     if ( (allGames[i].score > 2) ):  # and (double == False)  ):
-                        doubles.append( allGames[i].neural_network )
+                        currentCohort.append( allGames[i].neural_network )
                     
                 elif ( (allGames[i].score > 0) ):  # and (double == False)  ):
-                    doubles.append( allGames[i].neural_network )
+                    currentCohort.append( allGames[i].neural_network )
                 
-                #if ( (allGames[i].score > 2) ):  #  and (double == True)  ):
-                #    doubles.append( allGames[i].neural_network )
 
-
-        if (allGames[i].score > 2.0   ):
-            pass
-            print("NN scored! " + str( allGames[i].score  ) )
-        
+        # If we have a new high score, save the weights 
         global highestScore
         if ( allGames[i].score > highestScore ):
             highestScore = allGames[i].score
             print("Saved weights on a game with a score >= " + str(highestScore) )
             allGames[i].neural_network.saveWeights()
+    
+    return currentCohort
 
 
-    print("")
-    print("The percentage of doubles is " + str( float( len(doubles) ) / float( len( allGames)  )   ) )
-    print("")
-
-    return doubles
-
-
+# Create the inital conditions and begin training
 numGenerations = 0
-#gen_now = generation_0(2000)
+# gen_now = generation_0(2000)
 
 rate_level = [5, 120, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 for i in range( numGenerations ):
@@ -141,15 +123,10 @@ for i in range( numGenerations ):
 
 # random.shuffle(gen_now)
 
-#gen_now[0].saveWeights()
-#gen_now[0].loadWeights()
-
-
 g = input("Press Enter to see the trained snake")
 
 numGames = 5
 for i in range(numGames):
-    # print("Game: " + str(i) )
     myGame = Game(20, 20, 900, 900, True)
     
     #myGame.neural_network.saveWeights()
@@ -170,9 +147,6 @@ for i in range(numGames):
             break
         else:
             myGame.nextState( move )
-
-
-
 
 
 ####################################

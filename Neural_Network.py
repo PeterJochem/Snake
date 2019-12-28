@@ -5,11 +5,10 @@ import random
 import copy
 
 class Neural_Network:
-
-    # Describe the inputs 
-    # NumInputs is 
+ 
+    # NumInputs is the number of input neurons to the NN
     # HiddenArch is a list of the number of neurons at each HIDDEN layer of the NN
-    # numOutput is 
+    # numOutput is the number of output neurons
     def __init__(self, numInputs, hiddenArch, numOutput):
         
         self.numInputs = numInputs
@@ -30,25 +29,15 @@ class Neural_Network:
                 # Normal case
                 self.allWeights.append( self.init_Weights( hiddenArch[i], hiddenArch[i + 1] ) )
          
-        for i in range(len( self.allWeights ) ):
-            #print("")
-            #print(self.allWeights[i])
-            #print("")
-            pass
         
-        # Pass in the size of the input
-        # self.w1 = self.init_Weights(numInputs, numHidden)
-        # self.bias_1 = np.ones(numHidden) * 0.1
-        # Pass in the size of the intermediate vector
-        # self.w2 = self.init_Weights(numHidden, numOutput)
-        # self.bias_2 = np.ones(numOutput) * 0.1
-        # For testing
+        # These fields record if the NN has moved in the given direction yet
         self.up = False
         self.down = False
         self.left = False
         self.right = False
-        ###########
     
+    # This method checks how many directions the snake has moved so far
+    # It returns the number of unique directions
     def checkMoves(self):
         count = 0
         if (self.up):
@@ -67,45 +56,27 @@ class Neural_Network:
 
         #if ( count == 3):
         #    print("TRIPLE")
-       
-        #if ( self.up and self.right ):
-        #    print("up and right")
-        
-        #if ( self.down and self.right  ):
-        #    print("down and right ")
-        
-        # Observed
-        #if( self.up and self.left ):
-        #    print("up and left")
-        
-        # Observed
-        #if ( self.down and self.left ):
-        #    print("down and left")
-        
-        #if ( self.down and self.up ):
-        #    print("up and down")
-        
-        # Observed
-        #if ( self.right and self.left  ):
-        #    print("left and right")
-    
-
-       #if (count == 2):
+        #if (count == 2):
         #    print("Double")
         #if (count == 1):
         #    print("SINGLE")
         return count
         
-
+    # This method checks if the snake/NN has moved in all 4 directions
+    # Return True if it has moved in all 4 directions
+    # Return False otherwise
     def checkDirections(self):
 
         if (self.up and self.down and self.left and self.right):
             return True
         return False
     
-    def createVector(self, start, stop, numCol, numRow):
+    # This method creates a matrix of the size (numRow, numCol)
+    # with random values in the interval of [start, stop]
+    # It returns the given matrix
+    def createVector(self, start, stop, numRow, numCol):
 
-        returnVector = np.zeros( (numCol, numRow) )
+        returnVector = np.zeros( (numRow, numCol) )
 
         for i in range(len( returnVector ) ):
             for j in range(len( returnVector[0] ) ):
@@ -115,13 +86,13 @@ class Neural_Network:
     
     # This method takes the current neural net and crosses it over
     # to make the offspring
-    # Input:
-    # Output:
+    # Input: partner is another NN
+    # Output: a set of NN's called offspring
     def crossOver(self, partner, numChildren):
 
         offSpring = []
         
-        # Re-set the state's fields
+        # Re-set the state's fields so we can reuse
         self.up = False
         self.down = False
         self.left = False
@@ -129,7 +100,6 @@ class Neural_Network:
         self.id = 0
 
         # Try averaging all the entries +/ random noise
-
         for i in range(numChildren):
 
             nextChild_solo =  copy.deepcopy(self)
@@ -186,7 +156,6 @@ class Neural_Network:
 
            returnVector[i] = (np.e ** inVector[i] ) / integral   
         
-        # print( returnVector )
         return returnVector
 
 
@@ -195,12 +164,7 @@ class Neural_Network:
     # Output: The maximum index of the output vector
     def forwardProp(self, inputVector):
         
-        #print("")   
-        #print( np.matmul( inputVector.copy().T, self.w1.copy() ) )
-        # print("")   
-        
         # WHY DOES RELU PREVENT TRIPLES??????
-        #layer_1 = self.relu( np.matmul( inputVector.copy().T, self.w1.copy() ) )  # + self.bias_1 )   
         
         layer_next = inputVector.copy().T
          
@@ -209,26 +173,13 @@ class Neural_Network:
             # layer_next = self.relu( np.matmul( layer_next.copy(), self.allWeights[i].copy() ) )
 
         # layer_next = self.softmax(layer_next)
-        # layer_1 =  np.matmul( inputVector.copy().T, self.w1.copy() )
 
         # Use the softmax function at the output layer
         #outputVector = # np.array( [ self.softmax( (np.matmul( layer_1.copy(), self.w2.copy() ) )[0] ) ] ) # + self.bias_2 )
         
-        # outputVector = np.array( [ np.matmul( layer_1.copy(), self.w2.copy() )[0]  ] ) 
-        #outputVector = np.matmul( layer_1.copy(), self.w2.copy() )
-    
-
-        #print("") 
-        #print(outputVector)
-        #print("")
-        
-        #while(True):
-        #    pass
-        
-        
         return layer_next
 
-    
+    # This method saves the given weights to the filed called best_weights.txt
     def saveWeights(self):
 
         myFile = open("best_weights.txt", "w+")
@@ -240,8 +191,6 @@ class Neural_Network:
         myFile.write( "numLayers:" + str( len(self.allWeights) + 1) )
         myFile.write("\n")
 
-        # Write the hidden layers - FIX to make more general!
-        # change the name of this to hidden width
         for i in range(len(self.allWeights) ):
             myFile.write( "layer:" + str( len(self.allWeights[i] ) ) )
             myFile.write("\n")
@@ -259,7 +208,7 @@ class Neural_Network:
 
         myFile.close()
 
-    # Load the weights from the file
+    # This method loads the weights from best_weights.txt into the current NN 
     def loadWeights(self):
         myFile = open("best_weights.txt", "r")
 
@@ -285,14 +234,9 @@ class Neural_Network:
                 lineNumber = lineNumber + 1
                 
                 continue
-                #print(numLayers)
-                #print(len(self.allWeights) )
-                # Record all the number of weights
             elif( (lineNumber >= 2) and ( lineNumber < numLayers + 2) ):
                 
                 allWidths.append( int( (x.split(":") )[1] ) )
-                    
-                # print( "Next width is " + str(allWidths[lineNumber - 2] ) )
 
                 lineNumber = lineNumber + 1
                 continue
@@ -303,10 +247,6 @@ class Neural_Network:
             # Write the weights
             newWeights[currentLayer][currentRow, currentColumn] = value_now
 
-            # Check for change to next weight set 
-            # Update the weight sets  
-            # Increment the current row and column
-            # currentRow = currentRow + 1
             currentColumn = currentColumn + 1
             if ( currentColumn >= len(newWeights[currentLayer][0] ) ):
                 currentColumn = 0
@@ -325,23 +265,6 @@ class Neural_Network:
         myFile.close()
 
 
-
-
-    # This method takes itself and a mate's weights
-    # and mutate them to return a child 
-    # Input:
-    # Output: child neural net
-    def mutate(self, mate):
-         
-        # Return a new, child neural network
-        pass 
-
-
-####### Main for testing ###########
-
-#myNN = Neural_Network(16, 5, 4)
-#inputVector = np.zeros(16)
-#print( myNN.forwardProp( inputVector  ) )
 
 
 

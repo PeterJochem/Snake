@@ -1,7 +1,5 @@
 # This file implements the snake class
-
 import numpy as np
-
 
 class Snake:
 
@@ -12,10 +10,12 @@ class Snake:
         self.color = color
         self.name = name 
 
-        self.body_x = np.array( [10 ] ) 
-        self.body_y = np.array( [10 ] )
+        self.body_x = np.array( [10] ) 
+        self.body_y = np.array( [10] )
     
-
+    # This method checks if a given (x,y) location on the board
+    # is pat of the snake's body
+    # Return True if the (x,y) is part of the body 
     def isBody(self, x, y):
         
         # Traverse the snake's body to check for collisions
@@ -26,8 +26,10 @@ class Snake:
          
         return True
 
-    # Input: 
-    # Return Value: 
+    # This method checks to see if a move is legal
+    # Move is a string {left, right, up, down}
+    # (x,y) is the curret x,y of the snake's body
+    # Return Value: True if the move is legal frmo 
     def isLegal(self, move, x, y, maxX, maxY):
         
         # Check for error conditions
@@ -54,7 +56,6 @@ class Snake:
         
         if ( (newX >= maxX) or (newY >= maxY) or (newX < 0) or (newY < 0) ):
             return False
-
 
         if ( (self.isBody(newX, newY) == True) ):
             return True
