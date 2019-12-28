@@ -1,11 +1,16 @@
+# How To Run My Code
+Clone my repo and run ```python3 Snake_Game.py```. No other software should need to be installed
+
+# Description
 I used a neural network and a genetic algorithm to learn how to play snake. First I prgrammed a simple snake game, then implemnted the algorithms to have the agent learn how to play the game.
 
 The program supports aribtrary graph structures. One could make the network as deep as one wanted to. One can also choose how wide to make each hidden layer. As of now, one can simply edit the Game.py file and change the arguments used to construct the neural network.
 
-I found good results using 
 
 The input vector is an 8 vector. There is one value for each of the 8 neighbors of the current location of the head. If moving to the given location reduces the distance to the food, then the entry is 1. If it increases the distance or stay the same, then the entry is a 0. Ideally, I would add, for each 8 neighbor, another piece of information describing where the body is. I experimented heavily with this and could not seem to learn a set of weights that explicity avoided its own body. It may be that I simply need to train longer or use a diffrent graph structure.
 
+
+# Results
 I found good results when I used two hidden layers. One of width 10 and the next of width 6. So the network is 8 x 10 x 6 x 4. I used the rectified linear unit on the input and hidden units and the softmax function on the output neurons.
 
 There are four output neurons. Each one represents one of the 4 legal moves for the snake. Whichever neuron is maximally fired, its corresponding direction will be moved in.  
