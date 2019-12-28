@@ -16,7 +16,7 @@ current_gen = 0
 
 # Records the highest score seen so far in training 
 # So we can save the weights of that neural network
-highestScore = 7
+highestScore = 3
 
 # This creates the inital cohort of neural networks
 # numGames is the number of games/nn's to have in the cohort
@@ -112,7 +112,7 @@ def nextGeneration(currentCohort, rate):
 
 # Create the inital conditions and begin training
 numGenerations = 0
-# gen_now = generation_0(2000)
+#gen_now = generation_0(2000)
 
 rate_level = [5, 120, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 for i in range( numGenerations ):

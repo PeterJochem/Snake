@@ -22,9 +22,9 @@ class Snake:
         for i in range(len( self.body_x ) ):
             
             if ( ( self.body_x[i] == x) and ( self.body_y[i] == y) ):
-                return False
+                return True
          
-        return True
+        return False
 
     # This method checks to see if a move is legal
     # Move is a string {left, right, up, down}
@@ -58,9 +58,9 @@ class Snake:
             return False
 
         if ( (self.isBody(newX, newY) == True) ):
-            return True
-        else:
             return False
+        else:
+            return True
         
         
 

@@ -786,8 +786,7 @@ class Game:
             # Check that the move is legal
             if ( self.snake.isLegal( move, x, y, self.length_grid, self.width_grid ) == False ):
                 
-                # print("Move rejected. Replanning")
-                # outputVector[0][move] = -1
+                # The game is over
                 self.isOver = True
             else:
                 break
