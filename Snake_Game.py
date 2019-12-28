@@ -112,7 +112,7 @@ def nextGeneration(currentCohort, rate):
 
 # Create the inital conditions and begin training
 numGenerations = 0
-#gen_now = generation_0(2000)
+# gen_now = generation_0(2000)
 
 rate_level = [5, 120, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 for i in range( numGenerations ):
@@ -121,7 +121,7 @@ for i in range( numGenerations ):
     
     gen_now = nextGeneration( gen_now, rate_level[i] )
 
-# random.shuffle(gen_now)
+#random.shuffle(gen_now)
 
 g = input("Press Enter to see the trained snake")
 

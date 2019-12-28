@@ -105,13 +105,13 @@ class Neural_Network:
             nextChild_solo =  copy.deepcopy(self)
             nextChild_couple = copy.deepcopy(self)
             
-            for i in range(len(self.allWeights) ):
+            for j in range(len(self.allWeights) ):
                 
-                nextChild_solo.allWeights[i] = ( ((self.allWeights[i] + partner.allWeights[i]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w1), len(self.w1[0])  )  )
-                nextChild_solo.allWeights[i] = ( ((self.allWeights[i] + partner.allWeights[i]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w2), len(self.w2[0] ) )  )
+                nextChild_solo.allWeights[j] = ( ((self.allWeights[j] + partner.allWeights[j]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w1), len(self.w1[0])  )  )
+                nextChild_solo.allWeights[j] = ( ((self.allWeights[j] + partner.allWeights[j]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w2), len(self.w2[0] ) )  )
 
-                nextChild_couple.allWeights[i] = ( ((self.allWeights[i]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[i]), len(self.allWeights[i][0] )  )  )
-                nextChild_couple.allWeights[i] = ( ((self.allWeights[i]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[i]), len(self.allWeights[i][0] )  )  )
+                nextChild_couple.allWeights[j] = ( ((self.allWeights[j]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[j]), len(self.allWeights[j][0] )  )  )
+                nextChild_couple.allWeights[j] = ( ((self.allWeights[j]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[j]), len(self.allWeights[j][0] )  )  )
 
             offSpring.append(nextChild_solo)
             offSpring.append(nextChild_couple)
