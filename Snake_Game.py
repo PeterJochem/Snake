@@ -101,10 +101,10 @@ def nextGeneration(doubles, rate):
             if ( allGames[i].moveNumber < 900 ):                
                 
                 if ( current_gen >= 1):
-                    if ( (allGames[i].score > 1) ):  # and (double == False)  ):
+                    if ( (allGames[i].score > 2) ):  # and (double == False)  ):
                         doubles.append( allGames[i].neural_network )
                     
-                elif ( (allGames[i].score > 1) ):  # and (double == False)  ):
+                elif ( (allGames[i].score > 0) ):  # and (double == False)  ):
                     doubles.append( allGames[i].neural_network )
                 
                 #if ( (allGames[i].score > 2) ):  #  and (double == True)  ):
@@ -113,7 +113,7 @@ def nextGeneration(doubles, rate):
 
         if (allGames[i].score > 2.0   ):
             pass
-            # print("NN scored! " + str( allGames[i].score  ) )
+            print("NN scored! " + str( allGames[i].score  ) )
         
         global highestScore
         if ( allGames[i].score > highestScore ):

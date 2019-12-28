@@ -42,15 +42,15 @@ class Game:
         self.current_food = self.placeFood()
         
         # FIX ME!!                              # 5, 20
-        hiddenArch = [8] #  3, 4]
-        self.neural_network = Neural_Network( 16, hiddenArch, 4  )
+        hiddenArch = [5] #  3, 4]
+        self.neural_network = Neural_Network( 8, hiddenArch, 4  )
         
         #print( len(self.neural_network.allWeights[0]) )
 
         ######## GRAPHICS FIELDS #############
         # Store fields here to make copying the NN easier later 
         # Store ratio to describe how much space the NN gets 
-        self.allPoints = self.draw_NN()
+        self.allPoints = self.draw_NN_2()
         
         # self.allWeights_graphics = 
 
@@ -141,6 +141,7 @@ class Game:
 
         # Create the output neurons
         # Draw the center(s) neurons
+        currentLayer = []
         length = -1
         priorOffset = -1
         numNeurons = 4
@@ -156,12 +157,12 @@ class Game:
         # Draw the first
         nextCircle = Circle(nextPoint1, 3)
         nextCircle.setFill("red")
-        allCircles.append(nextCircle)
+        currentLayer.append(nextCircle)
         nextCircle.draw(self.window)
         # Draw the second
         nextCircle = Circle(nextPoint2, 3)
         nextCircle.setFill("red")
-        allCircles.append(nextCircle)
+        currentLayer.append(nextCircle)
         nextCircle.draw(self.window)
 
         # Draw the rest of the neurons
@@ -171,13 +172,13 @@ class Game:
             nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
             nextCircle = Circle(nextPoint, 3)
             nextCircle.setFill("red")
-            allCircles.append(nextCircle)
+            currentLayer.append(nextCircle)
             nextCircle.draw(self.window)
             # Draw the second
             nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
             nextCircle = Circle(nextPoint, 3)
             nextCircle.setFill("red")
-            allCircles.append(nextCircle)
+            currentLayer.append(nextCircle)
             nextCircle.draw(self.window)
             priorOffset = increment_x + priorOffset
 
@@ -188,6 +189,171 @@ class Game:
         # Return the list of points
         return allCircles 
         
+
+
+    def draw_NN_2(self):
+
+        if ( self.window == None):
+            return None
+
+        allCircles = []
+        currentLayer = []
+
+        center_x = (self.width_window * 0.75) + (0.5 * self.width_window * 0.24)
+
+        start_y = self.length_window * 0.03
+
+        neuronColor = "blue"
+        neuronRadius = 6
+
+        # We want the widest layer to just fill up the width
+        widest = 8
+        for i in range(len(self.neural_network.allWeights) ):
+            if ( ( len(self.neural_network.allWeights[i]) > widest) ):
+                    widest = len(self.neural_network.allWeights[i] )
+
+        increment_x = (self.width_window * 0.25) / (float( widest + 1 ) )
+
+        nextRow = start_y
+        lastColumn = center_x
+
+        # Create input and hidden neurons 
+        for i in range(len(self.neural_network.allWeights) ):
+
+            currentLayer = []
+            # Draw the center(s) neurons
+            length = -1
+            priorOffset = -1
+            numNeurons = len(self.neural_network.allWeights[i] )
+            if ( ( (numNeurons % 2) == 0) ):
+                # Draw two in the center
+                priorOffset = (increment_x / 2.0)
+                length = int( ( numNeurons - 2) / 2 )
+                nextPoint = None
+
+                nextPoint1 = Point( center_x + (increment_x / 2.0) , nextRow  )
+
+                nextPoint2 = Point( center_x - (increment_x / 2.0) , nextRow  )
+
+                # Draw the first
+                nextCircle = Circle(nextPoint1, neuronRadius)
+                nextCircle.setFill(neuronColor)
+                currentLayer.append(nextCircle)
+                nextCircle.draw(self.window)
+                # Draw the second
+                nextCircle = Circle(nextPoint2, neuronRadius)
+                nextCircle.setFill(neuronColor)
+                currentLayer.append(nextCircle)
+                nextCircle.draw(self.window)
+            
+            elif( (numNeurons % 2) != 0):
+                length = int( ( len(self.neural_network.allWeights[i] - 1) ) / 2)
+                priorOffest = 0.0
+                # Draw just one in the center
+                nextPoint = Point( center_x, nextRow)
+                nextCircle = Circle(nextPoint, neuronRadius)
+                nextCircle.setFill(neuronColor)
+                currentLayer.append(nextCircle)
+                nextCircle.draw(self.window)
+
+
+            # Draw the rest of the neurons
+            for j in range( length ):
+
+                # Draw the first
+                nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
+                nextCircle = Circle(nextPoint, neuronRadius)
+                nextCircle.setFill(neuronColor)
+                currentLayer.append(nextCircle)
+                nextCircle.draw(self.window)
+                # Draw the second
+                nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
+                nextCircle = Circle(nextPoint, neuronRadius)
+                nextCircle.setFill(neuronColor)
+                currentLayer.append(nextCircle)
+                nextCircle.draw(self.window)
+                priorOffset = increment_x + priorOffset
+
+            nextRow = nextRow + 100
+
+            # Put the currentLayer into the overall list
+            allCircles.append(currentLayer)
+
+
+        # Create the output neurons
+        currentLayer = []
+        # Draw the center(s) neurons
+        length = -1
+        priorOffset = -1
+        numNeurons = 4
+        # Draw two in the center
+        priorOffset = (increment_x / 2.0)
+        length = int( ( numNeurons - 2) / 2 )
+        nextPoint = None
+
+        nextPoint1 = Point( center_x + (increment_x / 2.0) , nextRow  )
+
+        nextPoint2 = Point( center_x - (increment_x / 2.0) , nextRow  )
+
+        # Draw the first
+        nextCircle = Circle(nextPoint1, neuronRadius)
+        nextCircle.setFill(neuronColor)
+        currentLayer.append(nextCircle)
+        nextCircle.draw(self.window)
+        # Draw the second
+        nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
+        nextCircle = Circle(nextPoint, neuronRadius)
+        nextCircle.setFill(neuronColor)
+        currentLayer.append(nextCircle)
+        nextCircle.draw(self.window)
+        
+        priorOffset =  increment_x / 2.0 # increment_x + priorOffset
+
+        #nextRow = nextRow + 100
+        #allCircles.append(currentLayer)
+        
+         # Draw the rest of the neurons
+        for j in range( length ):
+
+            # Draw the first
+            nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
+            nextCircle = Circle(nextPoint, neuronRadius)
+            nextCircle.setFill(neuronColor)
+            currentLayer.append(nextCircle)
+            nextCircle.draw(self.window)
+            # Draw the second
+            nextPoint = Point( center_x - (increment_x - priorOffset ) , nextRow  )
+            nextCircle = Circle(nextPoint, neuronRadius)
+            nextCircle.setFill(neuronColor)
+            currentLayer.append(nextCircle)
+            nextCircle.draw(self.window)
+            priorOffset = increment_x + priorOffset
+
+        allCircles.append(currentLayer)
+        nextRow = nextRow + 50
+
+        #return allCircles
+
+        # Draw the weights
+        allLines = []
+        for i in range(len( allCircles ) - 1 ):
+            # layer_prior_num = self.allWeights[i]
+            # layer_next_num = self.allWeights[i][0]
+            for j in range(len( allCircles[i]  ) ):
+
+                for k in range( len( allCircles[i + 1] ) ):
+
+                    nextLine = Line( allCircles[i][j].getCenter(), allCircles[i + 1][k].getCenter()  )
+                    nextLine.setFill( color_rgb( int( 150 - abs( self.neural_network.allWeights[i][j][k] * 149 ) ), 0, 0)  )
+                    nextLine.setWidth(1)
+                    nextLine.draw(self.window)
+                    allLines.append(nextLine)
+
+        # Return the list of points
+        return allCircles
+
+
+
 
     # Return the normalized distance
     def distance_wall(self, x, y, priorX, priorY):
@@ -346,7 +512,7 @@ class Game:
         # FIX ME!!
         # Let's start with just the 4 neighbor
         numNeighbors = 8
-        numStats = 2
+        numStats = 1
         length = numNeighbors * numStats
         returnVector = np.zeros( (length, 1) )
 
@@ -377,7 +543,7 @@ class Game:
             # Compute the statisitcs for the given neighbor
             returnVector[vectorIndex] =  self.distance_food( x, y, prior_x, prior_y ) 
             #returnVector[vectorIndex + 1] = 100 * self.distance_wall( x, y, prior_x, prior_y )
-            returnVector[vectorIndex + 1] = (self.distance_body( x, y ) )
+            # returnVector[vectorIndex + 1] = (self.distance_body( x, y ) )
             
             # returnVector[vectorIndex + 2] = 100 * (self.distance_body( x, y ) )
 
@@ -434,7 +600,7 @@ class Game:
     def drawBoard(self):
         
         if (self.window != None ):
-            self.window.setBackground("white") 
+            self.window.setBackground("black") 
         
         # draw everything once
         # Just set/re-set the colors to implement the gameplay

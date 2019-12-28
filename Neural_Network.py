@@ -208,7 +208,7 @@ class Neural_Network:
             layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
             # layer_next = self.relu( np.matmul( layer_next.copy(), self.allWeights[i].copy() ) )
 
-
+        # layer_next = self.softmax(layer_next)
         # layer_1 =  np.matmul( inputVector.copy().T, self.w1.copy() )
 
         # Use the softmax function at the output layer
