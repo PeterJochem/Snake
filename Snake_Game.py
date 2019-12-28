@@ -4,6 +4,7 @@ import numpy as np
 import graphics
 import time
 import random
+import copy
 
 ############ Main ##################
 
@@ -45,7 +46,14 @@ def generation_0( numGames ):
         if ( allGames[i].neural_network.checkMoves() > 3.0  ):
             if ( allGames[i].moveNumber < 900 ):
                 allDirections.append( allGames[i].neural_network )
+    
+    #print("There are " + str(len(allDirections) ) + " NN's in gen_0 going in all directions" )   
+    #for i in range(3):
+    #    for j in range(len( allDirections  ) ):
+    #        allDirections.append(  copy.deepcopy(allDirections[j] )  )
+    #print("There are " + str(len(allDirections) ) + " NN's in gen_0 going in all directions after multiplying by 6 and shuffling" )
 
+    #random.shuffle(allDirections) 
     # Return the NN's that have moved in all the directions
     return allDirections
 
@@ -93,10 +101,10 @@ def nextGeneration(currentCohort, rate):
             if ( allGames[i].moveNumber < 900 ):                
                 
                 if ( current_gen >= 1):
-                    if ( (allGames[i].score > 2) ):  # and (double == False)  ):
+                    if ( (allGames[i].score > 2) ): 
                         currentCohort.append( allGames[i].neural_network )
                     
-                elif ( (allGames[i].score > 0) ):  # and (double == False)  ):
+                elif ( (allGames[i].score > 0) ):  
                     currentCohort.append( allGames[i].neural_network )
                 
 
@@ -112,22 +120,22 @@ def nextGeneration(currentCohort, rate):
 
 # Create the inital conditions and begin training
 numGenerations = 0
-# gen_now = generation_0(2000)
+#gen_now = generation_0(2500)
 
-rate_level = [5, 120, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+rate_level = [5, 100, 10, 5, 5, 10, 10, 10, 10, 10, 10]
 for i in range( numGenerations ):
     current_gen = i
     print("Generation: " + str(i) )
     
     gen_now = nextGeneration( gen_now, rate_level[i] )
 
-#random.shuffle(gen_now)
+# random.shuffle(gen_now)
 
 g = input("Press Enter to see the trained snake")
 
 numGames = 5
 for i in range(numGames):
-    myGame = Game(20, 20, 900, 900, True)
+    myGame = Game(40, 40, 900, 900, True)
     
     #myGame.neural_network.saveWeights()
     # Load trained weights
@@ -138,7 +146,7 @@ for i in range(numGames):
     myGame.drawBoard()
 
     while ( True ):
-        time.sleep(0.2)
+        time.sleep(0.05)
         move = myGame.generate_NN_Move()
         if(myGame.neural_network.checkMoves() == True):
             pass 

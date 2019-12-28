@@ -47,7 +47,7 @@ class Game:
         self.current_food = self.placeFood()
         
         # FIX ME!!                              # 5, 20
-        hiddenArch = [5] #  3, 4]
+        hiddenArch = [10, 6] #  3, 4]
         self.neural_network = Neural_Network( 8, hiddenArch, 4  )
         
         #print( len(self.neural_network.allWeights[0]) )
@@ -547,7 +547,7 @@ class Game:
             # Compute distance to it's tail? 
             # Compute the statisitcs for the given neighbor
             returnVector[vectorIndex] =  self.distance_food( x, y, prior_x, prior_y ) 
-            #returnVector[vectorIndex + 1] = 100 * self.distance_wall( x, y, prior_x, prior_y )
+            # returnVector[vectorIndex + 1] = self.distance_wall( x, y, prior_x, prior_y )
             # returnVector[vectorIndex + 1] = (self.distance_body( x, y ) )
             
             # returnVector[vectorIndex + 2] = 100 * (self.distance_body( x, y ) )
