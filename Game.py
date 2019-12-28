@@ -8,11 +8,11 @@ from Neural_Network import Neural_Network
 
 class Game: 
     
-    # length_grid is 
-    # width grid is 
-    # legth_window is
-    # width_window is 
-    # display is 
+    # length_grid is the number of rows in the grid 
+    # width grid is the width of each grid 
+    # legth_window is the number of pixels in the window
+    # width_window is the number of pixels in the window
+    # display is the graphics window we will write to  
     def __init__(self, length_grid, width_grid, length_window, width_window, display):
         
         self.score = 0
@@ -46,157 +46,19 @@ class Game:
         self.current_food = [0, 0]
         self.current_food = self.placeFood()
         
-        # FIX ME!!                              # 5, 20
-        hiddenArch = [10, 6] #  3, 4]
+        # This describes the hidden layer's architecture
+        hiddenArch = [10, 6]
         self.neural_network = Neural_Network( 8, hiddenArch, 4  )
         
-        #print( len(self.neural_network.allWeights[0]) )
-
         ######## GRAPHICS FIELDS #############
         # Store fields here to make copying the NN easier later 
         # Store ratio to describe how much space the NN gets 
-        self.allPoints = self.draw_NN_2()
-        
-        # self.allWeights_graphics = 
-
-
+        self.allPoints = self.draw_NN()
         ######################################
-            
-
-    def draw_NN(self):
-        
-        if ( self.window == None):
-            return None
-
-        allCircles = [] 
-         
-        center_x = (self.width_window * 0.75) + (0.5 * self.width_window * 0.22)
-
-        start_y = self.length_window * 0.03
-        
-        # We want the widest layer to just fill up the width
-        widest = 8
-        for i in range(len(self.neural_network.allWeights) ):
-            if ( ( len(self.neural_network.allWeights[i]) > widest) ):
-                    widest = len(self.neural_network.allWeights[i] )
-        
-        increment_x = (self.width_window * 0.25) / (float( widest + 1 ) ) 
-
-        nextRow = start_y 
-        lastColumn = center_x
-        
-        # Create input and hidden neurons 
-        for i in range(len(self.neural_network.allWeights) ):
-            
-            # Draw the center(s) neurons
-            length = -1
-            priorOffset = -1
-            numNeurons = len(self.neural_network.allWeights[i] )
-            if ( ( (numNeurons % 2) == 0) ):
-                # Draw two in the center
-                priorOffset = (increment_x / 2.0)
-                length = int( ( numNeurons - 2) / 2 )
-                nextPoint = None
-                
-                nextPoint1 = Point( center_x + (increment_x / 2.0) , nextRow  )
-                
-                nextPoint2 = Point( center_x - (increment_x / 2.0) , nextRow  )
-                
-                # Draw the first
-                nextCircle = Circle(nextPoint1, 3)
-                nextCircle.setFill("red")
-                allCircles.append(nextCircle)
-                nextCircle.draw(self.window)
-                # Draw the second
-                nextCircle = Circle(nextPoint2, 3)
-                nextCircle.setFill("red")
-                allCircles.append(nextCircle)
-                nextCircle.draw(self.window)
-                    
-
-            elif( (numNeurons % 2) != 0):
-                length = int( ( len(self.neural_network.allWeights[i] - 1) ) / 2) 
-                priorOffest = 0.0
-                # Draw just one in the center
-                nextPoint = Point( center_x, nextRow)
-                nextCircle = Circle(nextPoint, 3)
-                nextCircle.setFill("red")
-                allCircles.append(nextCircle)
-                nextCircle.draw(self.window)
- 
-            
-            # Draw the rest of the neurons
-            for j in range( length ):    
-                    
-                # Draw the first
-                nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
-                nextCircle = Circle(nextPoint, 3)
-                nextCircle.setFill("red")
-                allCircles.append(nextCircle)
-                nextCircle.draw(self.window)
-                # Draw the second
-                nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
-                nextCircle = Circle(nextPoint, 3)
-                nextCircle.setFill("red")
-                allCircles.append(nextCircle)
-                nextCircle.draw(self.window)
-                priorOffset = increment_x + priorOffset 
-       
-            nextRow = nextRow + 50
-
-        # Create the output neurons
-        # Draw the center(s) neurons
-        currentLayer = []
-        length = -1
-        priorOffset = -1
-        numNeurons = 4
-        # Draw two in the center
-        priorOffset = (increment_x / 2.0)
-        length = int( ( numNeurons - 2) / 2 )
-        nextPoint = None
-
-        nextPoint1 = Point( center_x + (increment_x / 2.0) , nextRow  )
-
-        nextPoint2 = Point( center_x - (increment_x / 2.0) , nextRow  )
-
-        # Draw the first
-        nextCircle = Circle(nextPoint1, 3)
-        nextCircle.setFill("red")
-        currentLayer.append(nextCircle)
-        nextCircle.draw(self.window)
-        # Draw the second
-        nextCircle = Circle(nextPoint2, 3)
-        nextCircle.setFill("red")
-        currentLayer.append(nextCircle)
-        nextCircle.draw(self.window)
-
-        # Draw the rest of the neurons
-        for j in range( length ):
-
-            # Draw the first
-            nextPoint = Point( center_x + increment_x + priorOffset, nextRow  )
-            nextCircle = Circle(nextPoint, 3)
-            nextCircle.setFill("red")
-            currentLayer.append(nextCircle)
-            nextCircle.draw(self.window)
-            # Draw the second
-            nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
-            nextCircle = Circle(nextPoint, 3)
-            nextCircle.setFill("red")
-            currentLayer.append(nextCircle)
-            nextCircle.draw(self.window)
-            priorOffset = increment_x + priorOffset
-
-        nextRow = nextRow + 50
     
-        
-
-        # Return the list of points
-        return allCircles 
-        
-
-
-    def draw_NN_2(self):
+    # This method will draw the neural network to the given
+    # graphics window. If the window is None, then do nothing
+    def draw_NN(self):
 
         if ( self.window == None):
             return None
@@ -314,10 +176,7 @@ class Game:
         
         priorOffset =  increment_x / 2.0 # increment_x + priorOffset
 
-        #nextRow = nextRow + 100
-        #allCircles.append(currentLayer)
-        
-         # Draw the rest of the neurons
+        # Draw the rest of the neurons
         for j in range( length ):
 
             # Draw the first
@@ -337,8 +196,6 @@ class Game:
         allCircles.append(currentLayer)
         nextRow = nextRow + 50
 
-        #return allCircles
-
         # Draw the weights
         allLines = []
         for i in range(len( allCircles ) - 1 ):
@@ -357,10 +214,9 @@ class Game:
         # Return the list of points
         return allCircles
 
-
-
-
-    # Return the normalized distance
+    # This method returns the normalized distance to the wall in the direction we are moving
+    # (x,y) is the proposed, new location in the grid
+    # (priorX, priorY) is the location we moved from 
     def distance_wall(self, x, y, priorX, priorY):
 
         maxLength = maxLength = np.sqrt( ( (self.width_grid)**2) + ( (self.length_grid)**2) )
@@ -401,8 +257,7 @@ class Game:
         elif ( (x >= self.width_grid) or (y >= self.length_grid) ):
             # EXPLAIN THIS
             return 0.0
-       
-        
+         
         # Normal 4-neighbor cases 
         if ( ( int(x - priorX) != 0) ):
             # Moving to the right/left
@@ -412,8 +267,11 @@ class Game:
             return (maxLength - y) / maxLength 
 
          
-    # Describe the inputs
-    # FIX ME - add the diagonals!!!!!
+    # This method computes the distance from the head of the body to the tail
+    # in the direction we are moving in
+    # Return 0 if (x, y) goes out of bounds or collides with oneself
+    # Return 1 if (x,y) stays in bound and does not collide with onself
+    # (x,y) is the new loaction we are moving to 
     def distance_body(self, x, y):
         
         # Return 0 for bad
@@ -426,25 +284,19 @@ class Game:
         
         elif ( (x >= self.width_grid) or (y >= self.length_grid) ):
             return 0.0
-        
-        
+         
         # Traverse the x-dimension forwards    
         if ( self.snake.isBody(x, y) == True  ):
             return 0.0
         else:
             return 1.0
 
-
+    # This method returns the normalized distance to the food
+    # in the direction we are moving
+    # (x,y) is the proposed, new location in the grid
+    # (priorX, priorY) is the location we moved from
     def distance_food(self, x, y, priorX, priorY):
-        
-        # This computes the actual distance
-        #maxLength = np.sqrt( ( (self.width_grid)**2) + ( (self.length_grid)**2) )  
-        # Check that the (x,y) pair is legal
-        #if ( (x < 0) or (y < 0) or (x >= self.width_grid) or (y >= self.length_grid) ):
-        #    return -1
-        #return np.sqrt( ( (x - self.current_food[0])**2) + ( (y - self.current_food[1])**2) ) / maxLength
-        
-
+           
         # Check the 8 neighbor diagonal cases first
         deltaX = int(x - priorX)
         deltaY = int(y - priorY)
@@ -478,8 +330,6 @@ class Game:
             else:
                 return 0.0
 
-    
-
         # maxLength = np.sqrt( ( (self.width_grid)**2) + ( (self.length_grid)**2) ) 
         maxLength = self.width_grid
         # Check that the (x,y) pair is legal
@@ -495,48 +345,37 @@ class Game:
             return 0.0
         
 
-    
+    # This method generates the (x,y) pair of the given location's 8 neighbors
+    # (x, y) is the current location's coordinates in the game's grid
     def generate_8_Neighbors(self, x, y):
 
         return [ [x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1], [x + 1, y + 1], [x - 1, y - 1], [x - 1, y + 1], [x + 1, y - 1] ]
 
+    # This method generates the (x,y) pair of the given location's 4 neighbors
+    # (x, y) is the current location's coordinates in the game's grid
     def generate_4_Neighbors(self, x, y):
 
         return [ [x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1] ]
 
-
-        
-
-    
+ 
     # This method takes the game state and computes the in vector
     # that will go to the neural network
-    # Input: 
+    # Input: (x,y) is the current location of the head in the game's grid 
     # Output: N x ? np.array
     def compute_In_Vector(self, x, y):
         
-        # FIX ME!!
-        # Let's start with just the 4 neighbor
         numNeighbors = 8
         numStats = 1
         length = numNeighbors * numStats
         returnVector = np.zeros( (length, 1) )
-
-        # Statistics
-        # One-dimensional Distance to wall in that direction
-        # Distance to food if we move to that location
-        # Distance to the body? 
-            # 0 if no such body part in that direction
-        
-        # Create a list of tuples of each of the x and y locations
-        # The statistic methods will check if the locations are legal or not 
         
         neighbors_list = self.generate_8_Neighbors(x, y) 
         # neighbors_list = self.generate_4_Neighbors(x, y)
 
         vectorIndex = 0
         [ [x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1], [x + 1, y + 1], [x - 1, y - 1], [x - 1, y + 1], [x + 1, y - 1] ]
-        forward_x = [True, False, False, False, True, False, False, True]
-        forward_y = [False, False, True, False, True, False, True, False]
+        #forward_x = [True, False, False, False, True, False, False, True]
+        #forward_y = [False, False, True, False, True, False, True, False]
         for i in range( len(neighbors_list) ):
             
             prior_x = self.snake.body_x[-1] 
@@ -544,23 +383,17 @@ class Game:
             x = neighbors_list[i][0] 
             y = neighbors_list[i][1]
             
-            # Compute distance to it's tail? 
-            # Compute the statisitcs for the given neighbor
             returnVector[vectorIndex] =  self.distance_food( x, y, prior_x, prior_y ) 
             # returnVector[vectorIndex + 1] = self.distance_wall( x, y, prior_x, prior_y )
             # returnVector[vectorIndex + 1] = (self.distance_body( x, y ) )
-            
             # returnVector[vectorIndex + 2] = 100 * (self.distance_body( x, y ) )
 
             vectorIndex = vectorIndex + numStats
         
-        #print("")
-        #print("The inVector is " )
-        #print(returnVector)
-        #print("")
         return returnVector
         
-
+    
+    # This method randomnly places the food in the grid
     def placeFood(self):
         
         priorX = self.current_food[0]
@@ -581,23 +414,13 @@ class Game:
                 if ( (priorX == new_x) or ( priorY == new_y) ):
                     continue
 
-
+            # Always place the food in the same spot to start
             if( self.id == 0):
                  new_x = 4 # 4
                  new_y = 9 # 9
                  self.id = 1
                  return [new_x, new_y]
-            #elif(self.id == 1):
-            #    new_x = 5
-            #    new_y = 9    
-            #    self.id = 2
-            #    return [new_x, new_y]
-            #elif ( self.id == 2 ):
-            #    new_x = 5
-            #    new_y = 7
-            #    self.id = 3
-            #    return [new_x, new_y]
-            #else:
+            
             return [new_x, new_y]
 
     
@@ -607,12 +430,6 @@ class Game:
         if (self.window != None ):
             self.window.setBackground("black") 
         
-        # draw everything once
-        # Just set/re-set the colors to implement the gameplay
-        # Put lines between each cell for a cleaner display
-        
-        # Store the lists of lists of graphics objects that is the grid
-            
         self.rectangles = []
         
         # Store the list of points needed to draw the board
@@ -649,8 +466,6 @@ class Game:
 
         self.board = self.rectangles
 
-        # Draw lines over the original grid?
-        
         # Draw the snake's body
         x = self.snake.body_x[0]
         y = self.snake.body_y[0]
@@ -668,12 +483,6 @@ class Game:
                 pass
 
     
-        # Draw the neural network
-         
-        
-
-
-
     # This moves the game from one state to the next
     # Input is either "left", "right", "up", "down"
     def nextState(self, command):
@@ -757,18 +566,12 @@ class Game:
         self.snake.body_x = newState_x.copy()
         self.snake.body_y = newState_y.copy()
 
-
-        # Re-draw the data 
-        # Change the fill on the old states
-        # Change the fill on the new states
         # Traverse the list of the rectangles to change their fill colors
         if ( self.window != None ):
             for i in range( len( newState_x  ) ):
              
                 x = newState_x[i]
                 y = newState_y[i]
-
-                # self.rectangles[y][x].draw(self.window)
                 self.rectangles[y][x].setFill("white")
 
     # Let the neural net generate a move
@@ -796,8 +599,6 @@ class Game:
             print("(x, y) is ")
             print( str(x) + str(", ") + str(y) )
             self.isOver = True
-            #while(True):
-            #    pass
 
         if ( move == 0 ):
             self.neural_network.left = True
@@ -815,7 +616,6 @@ class Game:
             self.neural_network.up = True
             move = "up"
 
-        # print(move)
         return move
         
 

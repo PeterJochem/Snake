@@ -22,7 +22,7 @@ I implemented weight saving and loading to help speed up debugging times. The we
 A good weight set is learned in 3-4 generations.
 
 ### Video
-The video of the trained neural network playing snake can be found at
+The video of the trained neural network playing snake can be accessed below
 
 
 [![](http://img.youtube.com/vi/6AC9wYStHTM/0.jpg)](http://www.youtube.com/watch?v=6AC9wYStHTM "Neural Network Learns to Play Snake")
