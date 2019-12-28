@@ -16,6 +16,9 @@ There are four output neurons. Each one represents one of the 4 legal moves for 
 The Genetic Algorithm 
 The crossover function simply averages each matrix of weights from two of the chosen neural networks. Then, a small bit of noise is added to this average. 
 
+Weight Saving
+I implemented weight saving and loading to help speed up debugging times. The weights and meta-data are saved in best_weights.txt
+
 A good weight set is learned in 3-4 generations.
 
 The video of the trained neural network playing snake can be found at
