@@ -109,7 +109,7 @@ class Neural_Network:
 
         for i in range(len( returnVector ) ):
             for j in range(len( returnVector[0] ) ):
-                returnVector[i][j] =random.uniform(start, stop)
+                returnVector[i][j] = random.uniform(start, stop)
         
         return returnVector
     
@@ -205,8 +205,8 @@ class Neural_Network:
         layer_next = inputVector.copy().T
          
         for i in range(len(self.allWeights) ):
-            # layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
-            layer_next = self.relu( np.matmul( layer_next.copy(), self.allWeights[i].copy() ) )
+            layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
+            # layer_next = self.relu( np.matmul( layer_next.copy(), self.allWeights[i].copy() ) )
 
 
         # layer_1 =  np.matmul( inputVector.copy().T, self.w1.copy() )

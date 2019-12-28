@@ -42,8 +42,8 @@ class Game:
         self.current_food = self.placeFood()
         
         # FIX ME!!                              # 5, 20
-        hiddenArch = [5] #  3, 4]
-        self.neural_network = Neural_Network( 8, hiddenArch, 4  )
+        hiddenArch = [8] #  3, 4]
+        self.neural_network = Neural_Network( 16, hiddenArch, 4  )
         
         #print( len(self.neural_network.allWeights[0]) )
 
@@ -243,61 +243,25 @@ class Game:
          
     # Describe the inputs
     # FIX ME - add the diagonals!!!!!
-    def distance_body(self, x, y, forward):
+    def distance_body(self, x, y):
         
+        # Return 0 for bad
+        # Return 1 for good
+
         maxLength = np.sqrt( ( (self.width_grid)**2) + ( (self.length_grid)**2) )
         # Check that the (x, y) pair is legal    
         if ( (x < 0) or (y < 0) ):
-            return [0.0, 0.0]    
+            return 0.0    
         
         elif ( (x >= self.width_grid) or (y >= self.length_grid) ):
-            return [0.0, 0.0]
-            # return [maxLength, maxLength]
-       
-        # Traverse in this direction to see how far we are to any body part
-        # Set this to the high value to avoid discontinuity in the statistic!
-        # -1 is good, 0 is the worst, larger from there is better
-        linear_to_body_x_forward = maxLength
-        linear_to_body_y_forward = maxLength
-        linear_to_body_x_backwards = maxLength
-        linear_to_body_y_backwards = maxLength
-
-
-        # Traverse the x-dimension forwards
-        for i in range( self.length_grid - x ):
-            
-            if ( self.snake.isBody(x + i, y) == True  ):
-                linear_to_body_x_forward = float(i) / maxLength
-                break  
+            return 0.0
         
-        # Traverse the x-dimension backwards
-        for i in range( x ):
-
-            if ( self.snake.isBody(x - i, y) == True ):
-                linear_to_body_x_backwards = float(i) / maxLength
-                break
         
-        # Traverse the y-dimension forwards
-        for i in range( self.width_grid - y ):
-
-            if ( self.snake.isBody(x, y + i) == True ):
-                linear_to_body_y_forward = float(i) / maxLength                    
-                break
-
-        # Traverse the y-dimension backwards
-        for i in range( y ):
-
-            if ( self.snake.isBody(x, y - i) == True ):
-                linear_to_body_y_backwards = float(i) / maxLength
-                break
-        
-        # Return the tuple
-        if ( forward == True):
-            return [1.0, 1.0]
-            # return [linear_to_body_x_forward, linear_to_body_y_forward] 
+        # Traverse the x-dimension forwards    
+        if ( self.snake.isBody(x, y) == True  ):
+            return 0.0
         else:
-            return [1.0, 1.0]
-            # return  [linear_to_body_x_backwards, linear_to_body_y_backwards]
+            return 1.0
 
 
     def distance_food(self, x, y, priorX, priorY):
@@ -382,7 +346,7 @@ class Game:
         # FIX ME!!
         # Let's start with just the 4 neighbor
         numNeighbors = 8
-        numStats = 1
+        numStats = 2
         length = numNeighbors * numStats
         returnVector = np.zeros( (length, 1) )
 
@@ -399,7 +363,9 @@ class Game:
         # neighbors_list = self.generate_4_Neighbors(x, y)
 
         vectorIndex = 0
-        forward = [True, False, True, False]
+        [ [x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1], [x + 1, y + 1], [x - 1, y - 1], [x - 1, y + 1], [x + 1, y - 1] ]
+        forward_x = [True, False, False, False, True, False, False, True]
+        forward_y = [False, False, True, False, True, False, True, False]
         for i in range( len(neighbors_list) ):
             
             prior_x = self.snake.body_x[-1] 
@@ -409,10 +375,11 @@ class Game:
             
             # Compute distance to it's tail? 
             # Compute the statisitcs for the given neighbor
-            returnVector[vectorIndex] = 100 * self.distance_food( x, y, prior_x, prior_y ) 
-            # returnVector[vectorIndex + 1] = 100 * np.random.rand()    # self.distance_wall( x, y, prior_x, prior_y )
-            # returnVector[vectorIndex + 2] = 100 * (self.distance_body( x, y, True ) )[0]
-            #returnVector[vectorIndex + 3] =   (self.distance_body( x, y, forward[i] ) )[1]
+            returnVector[vectorIndex] =  self.distance_food( x, y, prior_x, prior_y ) 
+            #returnVector[vectorIndex + 1] = 100 * self.distance_wall( x, y, prior_x, prior_y )
+            returnVector[vectorIndex + 1] = (self.distance_body( x, y ) )
+            
+            # returnVector[vectorIndex + 2] = 100 * (self.distance_body( x, y ) )
 
             vectorIndex = vectorIndex + numStats
         

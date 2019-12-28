@@ -14,6 +14,8 @@ rate_update = 4
 
 current_gen = 0
 
+highestScore = 7
+
 def generation_0( numGames ):
 
     allGames = [  ]
@@ -98,11 +100,11 @@ def nextGeneration(doubles, rate):
         if ( allGames[i].neural_network.checkMoves() > 1.0  ):
             if ( allGames[i].moveNumber < 900 ):                
                 
-                if ( current_gen == 1):
-                    if ( (allGames[i].score > 5) ):  # and (double == False)  ):
+                if ( current_gen >= 1):
+                    if ( (allGames[i].score > 1) ):  # and (double == False)  ):
                         doubles.append( allGames[i].neural_network )
                     
-                elif ( (allGames[i].score > 0) ):  # and (double == False)  ):
+                elif ( (allGames[i].score > 1) ):  # and (double == False)  ):
                     doubles.append( allGames[i].neural_network )
                 
                 #if ( (allGames[i].score > 2) ):  #  and (double == True)  ):
@@ -110,7 +112,14 @@ def nextGeneration(doubles, rate):
 
 
         if (allGames[i].score > 2.0   ):
-            print("NN scored! " + str( allGames[i].score  ) )
+            pass
+            # print("NN scored! " + str( allGames[i].score  ) )
+        
+        global highestScore
+        if ( allGames[i].score > highestScore ):
+            highestScore = allGames[i].score
+            print("Saved weights on a game with a score >= " + str(highestScore) )
+            allGames[i].neural_network.saveWeights()
 
 
     print("")
@@ -123,14 +132,14 @@ def nextGeneration(doubles, rate):
 numGenerations = 0
 #gen_now = generation_0(2000)
 
-rate_level = [100, 50, 10]
+rate_level = [5, 120, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 for i in range( numGenerations ):
     current_gen = i
     print("Generation: " + str(i) )
     
     gen_now = nextGeneration( gen_now, rate_level[i] )
 
-#random.shuffle(gen_now)
+# random.shuffle(gen_now)
 
 #gen_now[0].saveWeights()
 #gen_now[0].loadWeights()
@@ -147,7 +156,7 @@ for i in range(numGames):
     # Load trained weights
     myGame.neural_network.loadWeights()
     
-    #myGame.neural_network = gen_now[0]
+    # myGame.neural_network = gen_now[0]
     
     myGame.drawBoard()
 
