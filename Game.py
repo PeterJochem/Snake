@@ -39,7 +39,7 @@ class Game:
         
         # This also sets the methods board object
         self.drawBoard()
-        
+            
         self.id = 0
 
         # A tuple of the current food's location
@@ -107,6 +107,7 @@ class Game:
                 nextCircle.setFill(neuronColor)
                 currentLayer.append(nextCircle)
                 nextCircle.draw(self.window)
+    
                 # Draw the second
                 nextCircle = Circle(nextPoint2, neuronRadius)
                 nextCircle.setFill(neuronColor)
@@ -167,6 +168,7 @@ class Game:
         nextCircle.setFill(neuronColor)
         currentLayer.append(nextCircle)
         nextCircle.draw(self.window)
+        
         # Draw the second
         nextPoint = Point( center_x - (increment_x + priorOffset ) , nextRow  )
         nextCircle = Circle(nextPoint, neuronRadius)
@@ -199,8 +201,6 @@ class Game:
         # Draw the weights
         allLines = []
         for i in range(len( allCircles ) - 1 ):
-            # layer_prior_num = self.allWeights[i]
-            # layer_next_num = self.allWeights[i][0]
             for j in range(len( allCircles[i]  ) ):
 
                 for k in range( len( allCircles[i + 1] ) ):
@@ -262,7 +262,6 @@ class Game:
         if ( ( int(x - priorX) != 0) ):
             # Moving to the right/left
             return (maxLength - x) / maxLength
-
         else:
             return (maxLength - y) / maxLength 
 
@@ -272,11 +271,10 @@ class Game:
     # Return 0 if (x, y) goes out of bounds or collides with oneself
     # Return 1 if (x,y) stays in bound and does not collide with onself
     # (x,y) is the new loaction we are moving to 
+    # Return 0 for bad
+    # Return 1 for good
     def distance_body(self, x, y):
         
-        # Return 0 for bad
-        # Return 1 for good
-
         maxLength = np.sqrt( ( (self.width_grid)**2) + ( (self.length_grid)**2) )
         # Check that the (x, y) pair is legal    
         if ( (x < 0) or (y < 0) ):
@@ -286,7 +284,7 @@ class Game:
             return 0.0
          
         # Traverse the x-dimension forwards    
-        if ( self.snake.isBody(x, y) == True  ):
+        if ( self.snake.isBody(x, y) == True ):
             return 0.0
         else:
             return 1.0
@@ -295,6 +293,8 @@ class Game:
     # in the direction we are moving
     # (x,y) is the proposed, new location in the grid
     # (priorX, priorY) is the location we moved from
+    # Return 1 if moving in that direction will hit the wall
+    # Return 0 if moving in that direction will not hit the wall
     def distance_food(self, x, y, priorX, priorY):
            
         # Check the 8 neighbor diagonal cases first
@@ -330,7 +330,6 @@ class Game:
             else:
                 return 0.0
 
-        # maxLength = np.sqrt( ( (self.width_grid)**2) + ( (self.length_grid)**2) ) 
         maxLength = self.width_grid
         # Check that the (x,y) pair is legal
         if ( (x < 0) or (y < 0) or (x >= self.length_grid) or (y >= self.width_grid) ):
@@ -384,9 +383,6 @@ class Game:
             y = neighbors_list[i][1]
             
             returnVector[vectorIndex] =  self.distance_food( x, y, prior_x, prior_y ) 
-            # returnVector[vectorIndex + 1] = self.distance_wall( x, y, prior_x, prior_y )
-            # returnVector[vectorIndex + 1] = (self.distance_body( x, y ) )
-            # returnVector[vectorIndex + 2] = 100 * (self.distance_body( x, y ) )
 
             vectorIndex = vectorIndex + numStats
         
@@ -416,8 +412,8 @@ class Game:
 
             # Always place the food in the same spot to start
             if( self.id == 0):
-                 new_x = 4 # 4
-                 new_y = 9 # 9
+                 new_x = 4 
+                 new_y = 9 
                  self.id = 1
                  return [new_x, new_y]
             
@@ -476,6 +472,7 @@ class Game:
             self.message.setSize(18)
             self.message.setTextColor("white")
             self.message.draw(self.window)
+            
             # Draw the food
             try:
                 self.rectangles[ self.current_food[1] ][ self.current_food[0]  ].setFill("purple")
@@ -484,7 +481,7 @@ class Game:
 
     
     # This moves the game from one state to the next
-    # Input is either "left", "right", "up", "down"
+    # Command is either "left", "right", "up", "down"
     def nextState(self, command):
         
         self.moveNumber = self.moveNumber + 1
@@ -575,6 +572,7 @@ class Game:
                 self.rectangles[y][x].setFill("white")
 
     # Let the neural net generate a move
+    # Return "left" or "right" or "up" or "down"
     def generate_NN_Move(self):
 
         x = self.snake.body_x[ -1 ]

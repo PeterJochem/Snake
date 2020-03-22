@@ -1,6 +1,6 @@
-# This file implements the snake class
 import numpy as np
 
+# This class implements the snake object
 class Snake:
 
     # Constructor 

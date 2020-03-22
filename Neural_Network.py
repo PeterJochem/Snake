@@ -1,9 +1,8 @@
-# This file implements the neural network
-
 import numpy as np
 import random
 import copy
 
+# This class implements the neural network
 class Neural_Network:
  
     # NumInputs is the number of input neurons to the NN
@@ -19,7 +18,6 @@ class Neural_Network:
 
         for i in range( -1, len(hiddenArch)  ):
             # Check the edge cases
-            # print(i)
             if (i == -1):
                 self.allWeights.append( self.init_Weights(numInputs, hiddenArch[0] ) )
         
@@ -44,22 +42,14 @@ class Neural_Network:
             count = count + 1
 
         if ( self.down ):
-            # Occurs
             count = count + 1
 
         if(self.left):
             count = count + 1
 
         if(self.right):
-            # Occurs
             count = count + 1
 
-        #if ( count == 3):
-        #    print("TRIPLE")
-        #if (count == 2):
-        #    print("Double")
-        #if (count == 1):
-        #    print("SINGLE")
         return count
         
     # This method checks if the snake/NN has moved in all 4 directions
@@ -107,8 +97,8 @@ class Neural_Network:
             
             for j in range(len(self.allWeights) ):
                 
-                nextChild_solo.allWeights[j] = ( ((self.allWeights[j] + partner.allWeights[j]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w1), len(self.w1[0])  )  )
-                nextChild_solo.allWeights[j] = ( ((self.allWeights[j] + partner.allWeights[j]) ) / 2.0) #+ ( self.createVector( -100.0, 100.0, len(self.w2), len(self.w2[0] ) )  )
+                nextChild_solo.allWeights[j] = ( ((self.allWeights[j] + partner.allWeights[j]) ) / 2.0) 
+                nextChild_solo.allWeights[j] = ( ((self.allWeights[j] + partner.allWeights[j]) ) / 2.0) 
 
                 nextChild_couple.allWeights[j] = ( ((self.allWeights[j]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[j]), len(self.allWeights[j][0] )  )  )
                 nextChild_couple.allWeights[j] = ( ((self.allWeights[j]) ) ) + ( self.createVector( -1.0, 1.0, len(self.allWeights[j]), len(self.allWeights[j][0] )  )  )
@@ -164,19 +154,12 @@ class Neural_Network:
     # Output: The maximum index of the output vector
     def forwardProp(self, inputVector):
         
-        # WHY DOES RELU PREVENT TRIPLES??????
-        
         layer_next = inputVector.copy().T
          
         for i in range(len(self.allWeights) ):
             layer_next =  np.matmul( layer_next.copy(), self.allWeights[i].copy() )
             # layer_next = self.relu( np.matmul( layer_next.copy(), self.allWeights[i].copy() ) )
 
-        # layer_next = self.softmax(layer_next)
-
-        # Use the softmax function at the output layer
-        #outputVector = # np.array( [ self.softmax( (np.matmul( layer_1.copy(), self.w2.copy() ) )[0] ) ] ) # + self.bias_2 )
-        
         return layer_next
 
     # This method saves the given weights to the filed called best_weights.txt

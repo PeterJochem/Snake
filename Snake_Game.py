@@ -6,9 +6,6 @@ import time
 import random
 import copy
 
-############ Main ##################
-
-
 # Records how many children each NN has  
 rate_update = 4 
 
@@ -47,25 +44,21 @@ def generation_0( numGames ):
             if ( allGames[i].moveNumber < 900 ):
                 allDirections.append( allGames[i].neural_network )
     
-    #print("There are " + str(len(allDirections) ) + " NN's in gen_0 going in all directions" )   
-    #for i in range(3):
-    #    for j in range(len( allDirections  ) ):
-    #        allDirections.append(  copy.deepcopy(allDirections[j] )  )
-    #print("There are " + str(len(allDirections) ) + " NN's in gen_0 going in all directions after multiplying by 6 and shuffling" )
-
-    #random.shuffle(allDirections) 
     # Return the NN's that have moved in all the directions
     return allDirections
 
 # This takes a group of NN's and the number of children each can have 
 # and generates the next generation of NN's
-# 
+# currentCohort is a list of snake objects
+# rate is a double desribing the rate of mutation
+# Returns a list of new snake objects that is the next generation
 def nextGeneration(currentCohort, rate): 
     
     global rate_update
     global current_gen
     double = False
     
+    # Generate children via the crossover function
     children = []
     for i in range(len(currentCohort) - 1 ):
             
@@ -75,8 +68,10 @@ def nextGeneration(currentCohort, rate):
 
     
     allGames = []
-    # Run a game for each child
+   
+   # Run a game for each child
     for i in range( len(children)  ):
+        # This creates a game object with a GUI
         myGame = Game(20, 20, 600, 500, False)
             
         myGame.neural_network = children[i]
@@ -94,7 +89,8 @@ def nextGeneration(currentCohort, rate):
                 break
             else:
                 myGame.nextState( move )
-            
+           
+
     currentCohort = []
     for i in range(1, len(allGames) ):
         if ( allGames[i].neural_network.checkMoves() > 1.0):
@@ -119,17 +115,19 @@ def nextGeneration(currentCohort, rate):
 
 
 # Create the inital conditions and begin training
-numGenerations = 0
-#gen_now = generation_0(2500)
+numGenerations = 2
+gen_now = generation_0(1000)
 
+# This is the rate of mutation for eacch generation
 rate_level = [5, 100, 10, 5, 5, 10, 10, 10, 10, 10, 10]
+
 for i in range( numGenerations ):
     current_gen = i
     print("Generation: " + str(i) )
     
     gen_now = nextGeneration( gen_now, rate_level[i] )
 
-# random.shuffle(gen_now)
+random.shuffle(gen_now)
 
 g = input("Press Enter to see the trained snake")
 
@@ -139,9 +137,8 @@ for i in range(numGames):
     
     #myGame.neural_network.saveWeights()
     # Load trained weights
-    myGame.neural_network.loadWeights()
-    
-    # myGame.neural_network = gen_now[0]
+    # myGame.neural_network.loadWeights()
+    myGame.neural_network = gen_now[0]
     
     myGame.drawBoard()
 
@@ -157,4 +154,3 @@ for i in range(numGames):
             myGame.nextState( move )
 
 
-####################################
